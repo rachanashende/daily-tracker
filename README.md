@@ -1,6 +1,6 @@
 # 🌸 Daily Tracker
 
-A girly, pastel, fully-functional **Personal Daily Tracker** — habits, study sessions, tasks, goals, analytics, calendar, Pomodoro timer, journal, notes, dark mode, CSV export, and JSON backups. Built with React + TypeScript + Tailwind on the frontend and Node + Express + Prisma + SQLite on the backend.
+A pastel, fully-functional **Personal Daily Tracker** — habits, study sessions, tasks, goals, analytics, calendar, Pomodoro timer, journal, notes, dark mode, CSV export, and JSON backups. Built with React + TypeScript + Tailwind on the frontend and Node + Express + Prisma + SQLite on the backend.
 
 ---
 
