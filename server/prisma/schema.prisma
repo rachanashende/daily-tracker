@@ -1,0 +1,182 @@
+// =====================================================================
+// Personal Daily Tracker — Prisma Schema
+// Database: SQLite (file-based, zero setup)
+// =====================================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ---------------------------------------------------------------------
+// USER
+// ---------------------------------------------------------------------
+model User {
+  id           String   @id @default(uuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  habits        Habit[]
+  studySessions StudySession[]
+  tasks         Task[]
+  goals         Goal[]
+  journalEntries JournalEntry[]
+  notes         Note[]
+  settings      UserSettings?
+
+  @@index([email])
+}
+
+// ---------------------------------------------------------------------
+// USER SETTINGS  (theme preference, notification prefs)
+// ---------------------------------------------------------------------
+model UserSettings {
+  id                    String   @id @default(uuid())
+  userId                String   @unique
+  user                  User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  theme                 String   @default("light") // "light" | "dark"
+  dailyReminder         Boolean  @default(true)
+  dailyReminderTime     String   @default("08:00")
+  deadlineReminders     Boolean  @default(true)
+  missedHabitAlerts     Boolean  @default(true)
+  updatedAt             DateTime @updatedAt
+}
+
+// ---------------------------------------------------------------------
+// HABIT
+// ---------------------------------------------------------------------
+model Habit {
+  id              String   @id @default(uuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name            String
+  description     String?
+  category        String   @default("General")
+  dailyTarget     Int      @default(1) // e.g. "3 liters" -> store as 3, unit below
+  unit            String   @default("time(s)")
+  icon            String   @default("✨")
+  color           String   @default("#f9a8d4")
+  currentStreak   Int      @default(0)
+  longestStreak   Int      @default(0)
+  archived        Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  completions HabitCompletion[]
+
+  @@index([userId])
+}
+
+// ---------------------------------------------------------------------
+// HABIT COMPLETION  (one row per habit per day)
+// ---------------------------------------------------------------------
+model HabitCompletion {
+  id        String   @id @default(uuid())
+  habitId   String
+  habit     Habit    @relation(fields: [habitId], references: [id], onDelete: Cascade)
+  date      String   // "YYYY-MM-DD" — stored as string for easy grouping
+  progress  Int      @default(1) // how many units completed that day
+  completed Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  @@unique([habitId, date])
+  @@index([habitId, date])
+}
+
+// ---------------------------------------------------------------------
+// STUDY SESSION
+// ---------------------------------------------------------------------
+model StudySession {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subject   String
+  topic     String?
+  duration  Int      // minutes
+  notes     String?
+  date      String   // "YYYY-MM-DD"
+  createdAt DateTime @default(now())
+
+  @@index([userId, date])
+  @@index([userId, subject])
+}
+
+// ---------------------------------------------------------------------
+// TASK
+// ---------------------------------------------------------------------
+model Task {
+  id          String    @id @default(uuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title       String
+  description String?
+  priority    String    @default("Medium") // Low | Medium | High
+  dueDate     String?   // "YYYY-MM-DD"
+  status      String    @default("Pending") // Pending | InProgress | Completed
+  completedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([userId, status])
+  @@index([userId, dueDate])
+}
+
+// ---------------------------------------------------------------------
+// GOAL
+// ---------------------------------------------------------------------
+model Goal {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title       String
+  description String?
+  type        String   @default("short") // "short" | "long"
+  deadline    String?  // "YYYY-MM-DD"
+  progress    Int      @default(0) // 0-100
+  completed   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId, type])
+}
+
+// ---------------------------------------------------------------------
+// JOURNAL ENTRY (daily journal)
+// ---------------------------------------------------------------------
+model JournalEntry {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date      String   // "YYYY-MM-DD"
+  mood      String?  // emoji or label
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, date])
+  @@index([userId, date])
+}
+
+// ---------------------------------------------------------------------
+// NOTE (freeform notes section)
+// ---------------------------------------------------------------------
+model Note {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  content   String
+  pinned    Boolean  @default(false)
+  color     String   @default("#fde2f3")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+}
