@@ -2,6 +2,7 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import morgan from "morgan";
+import path from "path";
 
 import authRoutes from "./routes/auth";
 import habitRoutes from "./routes/habits";
@@ -48,6 +49,16 @@ app.use("/api/notifications", notificationRoutes);
 app.use("/api/journal", journalRoutes);
 app.use("/api/notes", notesRoutes);
 app.use("/api/export", exportRoutes);
+
+// In production, serve the built React app from the client's dist folder
+// and let it handle any non-/api route (client-side routing).
+if (process.env.NODE_ENV === "production") {
+  const clientDist = path.join(__dirname, "../../client/dist");
+  app.use(express.static(clientDist));
+  app.get(/^\/(?!api).*/, (req, res) => {
+    res.sendFile(path.join(clientDist, "index.html"));
+  });
+}
 
 app.use(notFoundHandler);
 app.use(errorHandler);
