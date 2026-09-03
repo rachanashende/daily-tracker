@@ -1,0 +1,110 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-blush-100 dark:border-lavender-800;
+  }
+  body {
+    @apply bg-gradient-to-br from-blush-50 via-cream-50 to-lavender-50
+      dark:from-[#1a1525] dark:via-[#1f1830] dark:to-[#1a1525]
+      text-gray-700 dark:text-gray-200 font-sans antialiased min-h-screen transition-colors duration-300;
+  }
+  h1, h2, h3, h4 {
+    @apply font-display;
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-white/80 dark:bg-[#241b35]/80 backdrop-blur-sm rounded-3xl shadow-soft
+      border border-white/60 dark:border-lavender-900/40 p-5 transition-all duration-200;
+  }
+  .card-hover {
+    @apply hover:shadow-soft-lg hover:-translate-y-0.5;
+  }
+  .btn-primary {
+    @apply bg-gradient-to-r from-blush-400 to-lavender-400 text-white font-semibold
+      px-5 py-2.5 rounded-full shadow-soft hover:shadow-soft-lg hover:scale-[1.02]
+      active:scale-[0.98] transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  .btn-secondary {
+    @apply bg-white dark:bg-lavender-900/40 text-blush-600 dark:text-lavender-200 font-semibold
+      px-5 py-2.5 rounded-full border-2 border-blush-200 dark:border-lavender-700
+      hover:bg-blush-50 dark:hover:bg-lavender-900/70 transition-all duration-150;
+  }
+  .btn-icon {
+    @apply w-9 h-9 flex items-center justify-center rounded-full hover:bg-blush-100
+      dark:hover:bg-lavender-800/60 transition-colors duration-150;
+  }
+  .input-field {
+    @apply w-full px-4 py-2.5 rounded-2xl border-2 border-blush-100 dark:border-lavender-800
+      bg-white dark:bg-[#1a1525] focus:outline-none focus:border-blush-300 dark:focus:border-lavender-500
+      focus:ring-4 focus:ring-blush-100 dark:focus:ring-lavender-900 transition-all duration-150
+      placeholder:text-gray-400 dark:text-gray-100;
+  }
+  .label-text {
+    @apply text-sm font-semibold text-gray-600 dark:text-gray-300 mb-1.5 block;
+  }
+  .badge {
+    @apply text-xs font-bold px-2.5 py-1 rounded-full;
+  }
+  .pill-nav-item {
+    @apply flex items-center gap-3 px-4 py-2.5 rounded-2xl font-medium text-gray-500
+      dark:text-gray-300 hover:bg-blush-50 dark:hover:bg-lavender-900/40 transition-all duration-150;
+  }
+  .pill-nav-item.active {
+    @apply bg-gradient-to-r from-blush-100 to-lavender-100 dark:from-blush-900/40 dark:to-lavender-900/50
+      text-blush-600 dark:text-blush-200 shadow-soft font-semibold;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #fda4c0;
+  border-radius: 10px;
+}
+.dark ::-webkit-scrollbar-thumb {
+  background: #6c34bc;
+}
+
+/* Progress bar fill animation */
+.progress-fill {
+  transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Checkbox custom style */
+.cute-checkbox {
+  appearance: none;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 9999px;
+  border: 2px solid #fda4c0;
+  cursor: pointer;
+  position: relative;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+.cute-checkbox:checked {
+  background: linear-gradient(135deg, #fb7aa3, #b08ff8);
+  border-color: transparent;
+}
+.cute-checkbox:checked::after {
+  content: "✓";
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 0.85rem;
+  font-weight: bold;
+}
